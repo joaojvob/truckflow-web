@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LoginForm } from '@/features/auth/components/LoginForm'
 import type { LoginFormData } from '@/features/auth/schemas/auth.schema'
 import { useAuthStore } from '@/features/auth/store/auth-store'
-import { AuthLayout } from '@/shared/components/layout/AuthLayout'
+import { AuthSplitLayout } from '@/shared/components/layout/AuthLayout'
 import { ROUTES } from '@/shared/constants/routes'
 import { getApiErrorMessage } from '@/shared/lib/api-client'
+import { getDefaultRouteForRole } from '@/shared/lib/role-routing'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -20,12 +21,13 @@ export function LoginPage() {
     try {
       const user = await login(data.email, data.password)
 
-      if (!user.tenant) {
+      // Super admin não tem tenant próprio: vai direto para a lista de empresas.
+      if (user.role !== 'super_admin' && !user.tenant) {
         navigate(ROUTES.createTenant)
         return
       }
 
-      navigate(ROUTES.dashboard)
+      navigate(getDefaultRouteForRole(user.role))
     } catch (error) {
       setErrorMessage(getApiErrorMessage(error, 'Não foi possível entrar.'))
     } finally {
@@ -34,8 +36,19 @@ export function LoginPage() {
   }
 
   return (
-    <AuthLayout>
+    <AuthSplitLayout
+      title="Bem-vindo de volta"
+      subtitle="Informe seu e-mail e senha para acessar o painel."
+      footer={
+        <span>
+          © {new Date().getFullYear()} TruckFlow ·{' '}
+          <Link className="text-primary hover:underline" to={ROUTES.register}>
+            Criar conta
+          </Link>
+        </span>
+      }
+    >
       <LoginForm onSubmit={handleSubmit} errorMessage={errorMessage} isLoading={isLoading} />
-    </AuthLayout>
+    </AuthSplitLayout>
   )
 }

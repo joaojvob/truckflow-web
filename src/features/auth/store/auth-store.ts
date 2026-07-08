@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { User } from '@/shared/types/api.types'
 import { authApi } from '@/features/auth/services/auth-api'
 import { clearStoredToken, getStoredToken, setStoredToken } from '@/shared/lib/api-client'
+import { clearTenantContext } from '@/shared/lib/tenant-context'
 
 interface AuthState {
   user: User | null
@@ -11,7 +12,7 @@ interface AuthState {
   bootstrap: () => Promise<void>
   login: (email: string, password: string) => Promise<User>
   register: (name: string, email: string, password: string, passwordConfirmation: string) => Promise<User>
-  setSession: (user: User, token: string) => void
+  setSession: (token: string) => Promise<User>
   refreshUser: () => Promise<void>
   logout: () => Promise<void>
 }
@@ -40,20 +41,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   login: async (email, password) => {
-    const { user, token } = await authApi.login(email, password)
-    get().setSession(user, token)
-    return user
+    const { token } = await authApi.login(email, password)
+    return get().setSession(token)
   },
 
   register: async (name, email, password, passwordConfirmation) => {
-    const { user, token } = await authApi.register(name, email, password, passwordConfirmation)
-    get().setSession(user, token)
-    return user
+    const { token } = await authApi.register(name, email, password, passwordConfirmation)
+    return get().setSession(token)
   },
 
-  setSession: (user, token) => {
+  setSession: async (token) => {
     setStoredToken(token)
-    set({ user, token, isAuthenticated: true, isBootstrapping: false })
+    set({ token, isAuthenticated: true, isBootstrapping: false })
+
+    const user = await authApi.me()
+    set({ user })
+
+    return user
   },
 
   refreshUser: async () => {
@@ -66,6 +70,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await authApi.logout()
     } finally {
       clearStoredToken()
+      clearTenantContext()
       set({ user: null, token: null, isAuthenticated: false })
     }
   },

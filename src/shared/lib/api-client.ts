@@ -1,5 +1,6 @@
 import axios, { type AxiosError } from 'axios'
 import type { ApiValidationError } from '@/shared/types/api.types'
+import { getTenantContext } from '@/shared/lib/tenant-context'
 
 const TOKEN_KEY = 'truckflow_token'
 
@@ -16,6 +17,11 @@ apiClient.interceptors.request.use((config) => {
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
+  }
+
+  const tenantContext = getTenantContext()
+  if (tenantContext?.tenantId) {
+    config.headers['X-Tenant-Id'] = String(tenantContext.tenantId)
   }
 
   return config
@@ -50,8 +56,8 @@ export function getApiErrorMessage(error: unknown, fallback = 'Ocorreu um erro.'
     const data = error.response?.data
 
     if (data?.errors) {
-      const first = Object.values(data.errors)[0]?.[0]
-      if (first) return first
+      const messages = Object.values(data.errors).flat().filter(Boolean)
+      if (messages.length > 0) return messages.join(' ')
     }
 
     if (data?.message) return data.message

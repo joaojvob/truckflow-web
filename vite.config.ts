@@ -14,11 +14,11 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost',
+        target: process.env.VITE_PROXY_TARGET ?? 'http://localhost',
         changeOrigin: true,
       },
       '/broadcasting': {
-        target: 'http://localhost',
+        target: process.env.VITE_PROXY_TARGET ?? 'http://localhost',
         changeOrigin: true,
       },
     },

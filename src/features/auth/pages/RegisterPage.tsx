@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { RegisterForm } from '@/features/auth/components/RegisterForm'
 import type { RegisterFormData } from '@/features/auth/schemas/auth.schema'
 import { useAuthStore } from '@/features/auth/store/auth-store'
-import { AuthLayout } from '@/shared/components/layout/AuthLayout'
+import { AuthSplitLayout } from '@/shared/components/layout/AuthLayout'
 import { ROUTES } from '@/shared/constants/routes'
 import { getApiErrorMessage } from '@/shared/lib/api-client'
 
@@ -28,8 +28,19 @@ export function RegisterPage() {
   }
 
   return (
-    <AuthLayout>
+    <AuthSplitLayout
+      title="Criar conta"
+      subtitle="Cadastre-se para começar a operar com o TruckFlow."
+      footer={
+        <span>
+          Já tem conta?{' '}
+          <Link className="text-primary hover:underline" to={ROUTES.login}>
+            Entrar
+          </Link>
+        </span>
+      }
+    >
       <RegisterForm onSubmit={handleSubmit} errorMessage={errorMessage} isLoading={isLoading} />
-    </AuthLayout>
+    </AuthSplitLayout>
   )
 }

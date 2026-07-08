@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'manager' | 'driver'
+export type UserRole = 'super_admin' | 'admin' | 'manager' | 'driver'
 
 export type FreightStatus =
   | 'pending'
@@ -10,11 +10,23 @@ export type FreightStatus =
   | 'cancelled'
   | 'rejected'
 
+export interface TenantFiscalSettings {
+  cnpj?: string
+  ie?: string
+  razao_social?: string
+  uf?: string
+  municipio?: string
+}
+
 export interface Tenant {
   id: number
   name: string
   slug: string
-  settings?: Record<string, unknown>
+  logo_url?: string | null
+  settings?: {
+    fiscal?: TenantFiscalSettings
+    [key: string]: unknown
+  } | null
 }
 
 export interface User {
@@ -24,6 +36,14 @@ export interface User {
   role: UserRole
   role_label?: string
   tenant?: Tenant | null
+  driver_profile?: {
+    id: number
+    phone?: string | null
+    photo_url?: string | null
+    is_available?: boolean
+    cnh_expiring_soon?: boolean
+    cnh_expired?: boolean
+  } | null
 }
 
 export interface ApiValidationError {

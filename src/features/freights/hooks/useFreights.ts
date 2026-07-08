@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { freightsApi } from '@/features/freights/services/freights-api'
+import { freightsApi, type FreightFilters } from '@/features/freights/services/freights-api'
 
-export function useFreights(page = 1) {
+export function useFreights(page = 1, filters: FreightFilters = {}) {
   return useQuery({
-    queryKey: ['freights', page],
-    queryFn: () => freightsApi.list(page),
+    queryKey: ['freights', page, filters],
+    queryFn: () => freightsApi.list(page, filters),
   })
 }
 

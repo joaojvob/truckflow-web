@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/features/auth/store/auth-store'
 import { CreateTenantForm } from '@/features/tenant/components/CreateTenantForm'
 import type { CreateTenantFormData } from '@/features/tenant/services/tenant-api'
 import { tenantApi } from '@/features/tenant/services/tenant-api'
-import { AuthLayout } from '@/shared/components/layout/AuthLayout'
+import { AuthSplitLayout } from '@/shared/components/layout/AuthLayout'
 import { ROUTES } from '@/shared/constants/routes'
 import { getApiErrorMessage } from '@/shared/lib/api-client'
 
@@ -30,12 +30,16 @@ export function CreateTenantPage() {
   }
 
   return (
-    <AuthLayout>
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold text-text">Criar empresa</h2>
-        <p className="text-sm text-muted">Configure a transportadora para começar a operar.</p>
-      </div>
+    <AuthSplitLayout
+      title="Criar empresa"
+      subtitle="Configure a transportadora para começar a operar."
+      footer={
+        <Link className="text-primary hover:underline" to={ROUTES.login}>
+          Voltar ao login
+        </Link>
+      }
+    >
       <CreateTenantForm onSubmit={handleSubmit} errorMessage={errorMessage} isLoading={isLoading} />
-    </AuthLayout>
+    </AuthSplitLayout>
   )
 }

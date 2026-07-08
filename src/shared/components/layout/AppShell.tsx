@@ -1,58 +1,135 @@
-import { NavLink, Outlet } from 'react-router-dom'
-import { ROUTES } from '@/shared/constants/routes'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/features/auth/store/auth-store'
+import { getNavItemsForRole } from '@/shared/constants/navigation'
+import { ROUTES } from '@/shared/constants/routes'
+import { useTenantContext } from '@/shared/hooks/useTenantContext'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/components/ui/Button'
-
-const navItems = [
-  { to: ROUTES.dashboard, label: 'Dashboard' },
-  { to: ROUTES.freights, label: 'Fretes' },
-]
+import { getDefaultRouteForRole } from '@/shared/lib/role-routing'
 
 export function AppShell() {
+  const navigate = useNavigate()
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
+  const { context: tenantContext, clear: clearTenantContext } = useTenantContext()
+
+  const isSuperAdmin = user?.role === 'super_admin'
+  const hasTenantContext = isSuperAdmin ? Boolean(tenantContext) : true
+  const navItems = user ? getNavItemsForRole(user.role, hasTenantContext) : []
+  const homeRoute =
+    user?.role === 'super_admin'
+      ? hasTenantContext
+        ? ROUTES.dashboard
+        : ROUTES.adminTenants
+      : user
+        ? getDefaultRouteForRole(user.role)
+        : '/'
+  const displayTenantName = isSuperAdmin ? tenantContext?.tenantName : user?.tenant?.name
+
+  const handleExitTenant = () => {
+    clearTenantContext()
+    navigate(ROUTES.adminTenants)
+  }
 
   return (
-    <div className="min-h-screen bg-surface">
-      <header className="border-b border-border bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-6">
-            <span className="text-lg font-bold text-text">TruckFlow</span>
-            <nav className="hidden gap-1 sm:flex">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === ROUTES.dashboard}
-                  className={({ isActive }) =>
-                    cn(
-                      'rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                      isActive ? 'bg-blue-50 text-primary' : 'text-muted hover:bg-slate-100 hover:text-text',
-                    )
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </nav>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-text">{user?.name}</p>
-              <p className="text-xs text-muted">{user?.tenant?.name ?? 'Sem empresa'}</p>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => void logout()}>
-              Sair
-            </Button>
-          </div>
+    <div className="flex min-h-screen bg-surface">
+      {/* Sidebar */}
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-white lg:flex">
+        <div className="flex items-center gap-2.5 px-5 py-5">
+          {user?.tenant?.logo_url ? (
+            <img
+              src={user.tenant.logo_url}
+              alt={user.tenant.name}
+              className="h-9 w-9 rounded-xl object-cover"
+            />
+          ) : (
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-bold text-white">
+              TF
+            </span>
+          )}
+          <span className="text-lg font-bold text-text">{user?.tenant?.name ?? 'TruckFlow'}</span>
         </div>
-      </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-6">
-        <Outlet />
-      </main>
+        <nav className="flex-1 space-y-1 px-3">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                cn(
+                  'flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
+                  isActive
+                    ? 'bg-primary-soft text-primary'
+                    : 'text-muted hover:bg-slate-50 hover:text-text',
+                )
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="border-t border-border p-4">
+          <div className="mb-3">
+            <p className="truncate text-sm font-medium text-text">{user?.name}</p>
+            <p className="truncate text-xs text-muted">{displayTenantName ?? 'Sem empresa'}</p>
+            <p className="mt-0.5 text-xs text-primary">{user?.role_label ?? user?.role}</p>
+          </div>
+          <Button variant="ghost" size="sm" className="w-full" onClick={() => void logout()}>
+            Sair
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <div className="flex flex-1 flex-col">
+        {/* Mobile top bar */}
+        <header className="flex items-center justify-between border-b border-border bg-white px-4 py-3 lg:hidden">
+          <NavLink className="flex items-center gap-2" to={homeRoute}>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-bold text-white">
+              TF
+            </span>
+            <span className="font-bold text-text">TruckFlow</span>
+          </NavLink>
+          <Button variant="ghost" size="sm" onClick={() => void logout()}>
+            Sair
+          </Button>
+        </header>
+
+        {/* Mobile nav */}
+        <nav className="flex gap-1 overflow-x-auto border-b border-border bg-white px-3 py-2 lg:hidden">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                cn(
+                  'shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                  isActive ? 'bg-primary-soft text-primary' : 'text-muted',
+                )
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <main className="flex-1 overflow-auto p-4 sm:p-6">
+          {isSuperAdmin && tenantContext ? (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-primary/20 bg-primary-soft px-4 py-3 text-sm">
+              <span>
+                Visualizando: <strong>{tenantContext.tenantName}</strong>
+              </span>
+              <Button variant="ghost" size="sm" onClick={handleExitTenant}>
+                Sair da empresa
+              </Button>
+            </div>
+          ) : null}
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
