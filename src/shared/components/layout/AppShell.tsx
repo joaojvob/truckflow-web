@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/features/auth/store/auth-store'
+import { NotificationBell } from '@/features/notifications/components/NotificationBell'
 import { getNavItemsForRole } from '@/shared/constants/navigation'
 import { ROUTES } from '@/shared/constants/routes'
 import { useTenantContext } from '@/shared/hooks/useTenantContext'
@@ -92,9 +93,12 @@ export function AppShell() {
             </span>
             <span className="font-bold text-text">TruckFlow</span>
           </NavLink>
-          <Button variant="ghost" size="sm" onClick={() => void logout()}>
-            Sair
-          </Button>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <Button variant="ghost" size="sm" onClick={() => void logout()}>
+              Sair
+            </Button>
+          </div>
         </header>
 
         {/* Mobile nav */}
@@ -115,6 +119,10 @@ export function AppShell() {
             </NavLink>
           ))}
         </nav>
+
+        <header className="hidden items-center justify-end gap-3 border-b border-border bg-white px-6 py-3 lg:flex">
+          <NotificationBell />
+        </header>
 
         <main className="flex-1 overflow-auto p-4 sm:p-6">
           {isSuperAdmin && tenantContext ? (
