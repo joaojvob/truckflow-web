@@ -38,6 +38,13 @@ export interface Freight {
   origin_lng?: number | null
   destination_lat?: number | null
   destination_lng?: number | null
+  enforce_route?: boolean
+  route?: {
+    polyline?: string | null
+    distance_meters?: number | null
+    duration_seconds?: number | null
+    calculated_at?: string | null
+  } | null
   distance_km?: number | null
   estimated_hours?: number | null
   price_per_km?: number | null

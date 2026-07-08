@@ -3,6 +3,7 @@ import { useFreight } from '@/features/freights/hooks/useFreights'
 import { FreightSummaryCard } from '@/features/freights/components/FreightTable'
 import { FreightWorkflowPanel } from '@/features/freights/components/FreightWorkflowPanel'
 import { DriverFreightWorkflowPanel } from '@/features/freights/components/DriverFreightWorkflowPanel'
+import { FreightRouteSection } from '@/features/freights/components/FreightRouteSection'
 import { FreightFiscalPanel } from '@/features/fiscal/components/FreightFiscalPanel'
 import { useAuthStore } from '@/features/auth/store/auth-store'
 import { ErrorMessage } from '@/shared/components/feedback/ErrorMessage'
@@ -58,6 +59,8 @@ export function FreightDetailPage() {
       />
 
       <FreightSummaryCard freight={freight} />
+
+      <FreightRouteSection freight={freight} isManager={isManager} isDriver={isDriver} />
 
       {isDriver ? <DriverFreightWorkflowPanel freight={freight} /> : null}
       {isManager ? <FreightWorkflowPanel freight={freight} /> : null}
