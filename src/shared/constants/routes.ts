@@ -10,6 +10,7 @@ export const ROUTES = {
   freightDetail: (id: number | string) => `/fretes/${id}`,
   freightEdit: (id: number | string) => `/fretes/${id}/editar`,
   drivers: '/motoristas',
+  fleet: '/frota',
   tenant: '/empresa',
   calendar: '/calendario',
   driverProfile: '/meu-perfil',

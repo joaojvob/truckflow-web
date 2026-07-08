@@ -7,6 +7,7 @@ import { CalendarPage } from '@/features/calendar/pages/CalendarPage'
 import { DashboardPage } from '@/features/dashboard/pages/DashboardPage'
 import { DriverProfilePage } from '@/features/driver/pages/DriverProfilePage'
 import { DriversPage } from '@/features/drivers/pages/DriversPage'
+import { FleetPage } from '@/features/fleet/pages/FleetPage'
 import { FreightCreatePage } from '@/features/freights/pages/FreightCreatePage'
 import { FreightDetailPage } from '@/features/freights/pages/FreightDetailPage'
 import { FreightEditPage } from '@/features/freights/pages/FreightEditPage'
@@ -66,6 +67,11 @@ export function AppRouter() {
 
               {/* Redireciona rota antiga de relatórios para o dashboard (aba Análise) */}
               <Route path={ROUTES.reports} element={<Navigate to={ROUTES.dashboard} replace />} />
+
+              {/* Frota — gestor/admin e motorista */}
+              <Route element={<RoleRoute allowedRoles={['super_admin', 'admin', 'manager', 'driver']} />}>
+                <Route path={ROUTES.fleet} element={<FleetPage />} />
+              </Route>
 
               {/* Motorista */}
               <Route element={<RoleRoute allowedRoles={['driver']} />}>
