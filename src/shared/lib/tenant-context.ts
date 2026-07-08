@@ -25,3 +25,9 @@ export function clearTenantContext(): void {
   localStorage.removeItem(TENANT_CONTEXT_KEY)
   window.dispatchEvent(new Event('truckflow:tenant-context'))
 }
+
+export function getEffectiveTenantId(userTenantId?: number | null): number | null {
+  const context = getTenantContext()
+  if (context?.tenantId) return context.tenantId
+  return userTenantId ?? null
+}

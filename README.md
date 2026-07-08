@@ -73,6 +73,7 @@ npm run dev
 - [x] CRUD de fretes com CEP, tipo de carga e resumo de rota
 - [x] Filtros avançados em fretes e motoristas
 - [x] Detalhe do frete com mapa da rota e waypoints
+- [x] Tracking ao vivo via Reverb (posição GPS + trail no mapa)
 - [x] Workflow gestor (aprovar doping, liberar viagem)
 - [x] Cadastro de motoristas em modal + foto
 - [x] Logo da empresa
@@ -88,7 +89,7 @@ npm run dev
 - [x] Visualização da frota vinculada
 
 ### Próximas iterações
-- [ ] Tracking ao vivo (Reverb/Echo)
+- [x] Tracking ao vivo (Reverb/Echo) no detalhe do frete em trânsito
 - [ ] Export PDF/XLSX de relatórios
 - [ ] Viewer de doping para gestor
 - [ ] Gestão de usuários
@@ -100,6 +101,15 @@ npm run dev      # desenvolvimento
 npm run build    # build produção
 npm run preview  # preview do build
 ```
+
+### Tracking ao vivo (Reverb)
+
+O mapa em tempo real no detalhe do frete (`in_transit`) usa Laravel Echo + Reverb.
+
+1. Na API, suba Reverb e a fila: `./vendor/bin/sail up -d` (serviços `reverb` e `queue`)
+2. Confirme `BROADCAST_CONNECTION=reverb` no `.env` da API
+3. No web, copie as variáveis `VITE_REVERB_*` do `.env.example` (chave padrão: `truckflow-key`)
+4. Sem Reverb, o painel faz polling a cada 30s como fallback
 
 ## Referências
 

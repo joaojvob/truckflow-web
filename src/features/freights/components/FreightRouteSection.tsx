@@ -8,6 +8,10 @@ import {
   type Waypoint,
   type WaypointType,
 } from '@/features/waypoints/services/waypoints-api'
+import { FreightLiveTrackingPanel } from '@/features/tracking/components/FreightLiveTrackingPanel'
+import { useDriverLocationReporter } from '@/features/tracking/hooks/useDriverLocationReporter'
+import { useFreightLiveTracking } from '@/features/tracking/hooks/useFreightLiveTracking'
+import { useAuthStore } from '@/features/auth/store/auth-store'
 import { ErrorMessage } from '@/shared/components/feedback/ErrorMessage'
 import { Badge } from '@/shared/components/ui/Badge'
 import { Button } from '@/shared/components/ui/Button'
@@ -16,6 +20,7 @@ import { Input } from '@/shared/components/ui/Input'
 import { Label } from '@/shared/components/ui/Label'
 import { Select } from '@/shared/components/ui/Select'
 import { getApiErrorMessage } from '@/shared/lib/api-client'
+import { getEffectiveTenantId } from '@/shared/lib/tenant-context'
 import { FreightRouteMap } from '@/features/freights/components/FreightRouteMap'
 
 const WAYPOINT_TYPES: Array<{ value: WaypointType; label: string }> = [
@@ -36,6 +41,12 @@ interface Props {
 export function FreightRouteSection({ freight, isManager, isDriver }: Props) {
   const queryClient = useQueryClient()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const user = useAuthStore((state) => state.user)
+  const isLive = freight.status === 'in_transit'
+  const tenantId = getEffectiveTenantId(user?.tenant?.id)
+
+  const tracking = useFreightLiveTracking(freight.id, tenantId, isLive)
+  useDriverLocationReporter(freight.id, isDriver && isLive)
 
   const { data: waypoints = [], isLoading } = useQuery({
     queryKey: ['waypoints', freight.id],
@@ -69,8 +80,11 @@ export function FreightRouteSection({ freight, isManager, isDriver }: Props) {
       <Card>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle>Mapa da rota</CardTitle>
-            <CardDescription>Origem, paradas e destino do frete.</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              Mapa da rota
+              {isLive ? <Badge tone="success">Em trânsito</Badge> : null}
+            </CardTitle>
+            <CardDescription>Origem, paradas, destino e posição do motorista.</CardDescription>
           </div>
           {isManager ? (
             <Button
@@ -85,10 +99,27 @@ export function FreightRouteSection({ freight, isManager, isDriver }: Props) {
         </div>
 
         <div className="mt-4">
+          {isLive ? (
+            <FreightLiveTrackingPanel
+              location={tracking.location}
+              isConnected={tracking.isConnected}
+              isReverbConfigured={tracking.isReverbConfigured}
+              isDriver={isDriver}
+              sosAlert={tracking.sosAlert}
+              onDismissSos={tracking.clearSos}
+            />
+          ) : null}
+
           {isLoading ? (
             <div className="flex h-64 items-center justify-center text-sm text-muted">Carregando mapa...</div>
           ) : (
-            <FreightRouteMap freight={freight} waypoints={waypoints} polyline={polyline} />
+            <FreightRouteMap
+              freight={freight}
+              waypoints={waypoints}
+              polyline={polyline}
+              driverLocation={isLive ? tracking.location : null}
+              trail={isLive ? tracking.trail : []}
+            />
           )}
         </div>
         {errorMessage ? <div className="mt-3"><ErrorMessage message={errorMessage} /></div> : null}

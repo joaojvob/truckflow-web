@@ -3,6 +3,7 @@ import type { User } from '@/shared/types/api.types'
 import { authApi } from '@/features/auth/services/auth-api'
 import { clearStoredToken, getStoredToken, setStoredToken } from '@/shared/lib/api-client'
 import { clearTenantContext } from '@/shared/lib/tenant-context'
+import { disconnectEcho } from '@/shared/lib/echo'
 
 interface AuthState {
   user: User | null
@@ -71,6 +72,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } finally {
       clearStoredToken()
       clearTenantContext()
+      disconnectEcho()
       set({ user: null, token: null, isAuthenticated: false })
     }
   },
