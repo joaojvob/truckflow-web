@@ -5,6 +5,7 @@ import type { FreightFilters } from '@/features/freights/services/freights-api'
 import { FreightTable } from '@/features/freights/components/FreightTable'
 import { FreightFilterBar } from '@/features/freights/components/FreightFilterBar'
 import { DriverFreightCards } from '@/features/freights/components/DriverFreightCards'
+import { DriverPortalSummary } from '@/features/driver/components/DriverPortalSummary'
 import { useAuthStore } from '@/features/auth/store/auth-store'
 import { EmptyState } from '@/shared/components/feedback/EmptyState'
 import { ErrorMessage } from '@/shared/components/feedback/ErrorMessage'
@@ -51,6 +52,8 @@ export function FreightsPage() {
       />
 
       {!isDriver ? <FreightFilterBar filters={filters} onChange={handleFiltersChange} /> : null}
+
+      {isDriver && data && !isLoading ? <DriverPortalSummary freights={data.data} /> : null}
 
       {isLoading || !data ? (
         <LoadingState message="Carregando fretes..." />

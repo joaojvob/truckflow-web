@@ -90,6 +90,19 @@ export const freightsApi = {
     return data.data
   },
 
+  async submitDoping(id: number, file: File): Promise<void> {
+    const formData = new FormData()
+    formData.append('file', file)
+    await apiClient.post(`/freights/${id}/doping`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+
+  async submitChecklist(id: number, items: Record<string, boolean>): Promise<Freight> {
+    const { data } = await apiClient.post<FreightResponse>(`/freights/${id}/checklist`, { items })
+    return data.data
+  },
+
   async listByDeadline(params: {
     deadline_from: string
     deadline_to: string

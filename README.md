@@ -1,6 +1,8 @@
 # TruckFlow Web
 
-Painel web para **Admin** e **Gestor** da transportadora. Consome a API Laravel (`truckflow-api`).
+Painel web multi-papel para transportadoras. Consome a API Laravel (`truckflow-api`).
+
+**Papéis:** Super Admin · Admin · Gestor · Motorista
 
 ## Stack
 
@@ -35,6 +37,7 @@ src/
 cd ../truckflow-api
 ./vendor/bin/sail up -d
 ./vendor/bin/sail artisan migrate:fresh --seed
+./vendor/bin/sail artisan storage:link
 
 # 2. Frontend
 cd ../truckflow-web
@@ -52,17 +55,43 @@ npm run dev
 
 | Papel | E-mail | Senha |
 |-------|--------|-------|
+| Super Admin | `super@truckflow.com` | `password` |
 | Admin | `admin@alpha.com` | `password` |
 | Gestor | `gerente@alpha.com` | `password` |
+| Motorista | `motorista@alpha.com` | `password` |
 
-## MVP atual (visual simples)
+## Funcionalidades
 
-- [x] Login / registro / criar empresa
-- [x] Dashboard (`/reports/dashboard`)
-- [x] Lista de fretes + detalhe
-- [ ] Criar/editar frete (próxima iteração)
-- [ ] Mapa e workflow avançado
-- [ ] WebSocket tracking
+### Super Admin
+- [x] Lista global de empresas com métricas
+- [x] Entrar no contexto de um tenant (`X-Tenant-Id`)
+- [x] Logs do sistema (erros + auditoria)
+
+### Admin / Gestor
+- [x] Login, registro e criar empresa
+- [x] Dashboard com visão geral e análise (relatórios integrados)
+- [x] CRUD de fretes com CEP, tipo de carga e resumo de rota
+- [x] Filtros avançados em fretes e motoristas
+- [x] Detalhe do frete com mapa da rota e waypoints
+- [x] Workflow gestor (aprovar doping, liberar viagem)
+- [x] Cadastro de motoristas em modal + foto
+- [x] Logo da empresa
+- [x] Frota (caminhões e reboques, CRLV, status)
+- [x] Notificações no header (sino)
+- [x] Suporte (tickets)
+
+### Motorista
+- [x] Portal com resumo operacional (fretes ativos, pendências, CNH)
+- [x] Lista de fretes em cards com badges de ação
+- [x] Workflow completo: aceitar/recusar, doping, checklist, iniciar e finalizar
+- [x] Perfil (foto, disponibilidade, CNH)
+- [x] Visualização da frota vinculada
+
+### Próximas iterações
+- [ ] Tracking ao vivo (Reverb/Echo)
+- [ ] Export PDF/XLSX de relatórios
+- [ ] Viewer de doping para gestor
+- [ ] Gestão de usuários
 
 ## Scripts
 
