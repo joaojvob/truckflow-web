@@ -103,6 +103,17 @@ export const freightsApi = {
     return data.data
   },
 
+  async fetchDopingFile(freightId: number, dopingTestId: number): Promise<{ blob: Blob; mimeType: string }> {
+    const response = await apiClient.get<Blob>(`/freights/${freightId}/doping/${dopingTestId}/file`, {
+      responseType: 'blob',
+    })
+    const mimeType =
+      typeof response.headers['content-type'] === 'string'
+        ? response.headers['content-type']
+        : 'application/octet-stream'
+    return { blob: response.data, mimeType }
+  },
+
   async listByDeadline(params: {
     deadline_from: string
     deadline_to: string

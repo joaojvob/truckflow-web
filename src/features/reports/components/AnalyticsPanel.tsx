@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import {
   Bar,
   BarChart,
@@ -25,6 +25,14 @@ import { formatCurrency } from '@/shared/lib/format'
 export function AnalyticsPanel() {
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
+  const [exportError, setExportError] = useState<string | null>(null)
+
+  const exportMutation = useMutation({
+    mutationFn: (format: 'pdf' | 'xlsx') =>
+      reportsApi.exportFinancial(format, { from: from || undefined, to: to || undefined }),
+    onSuccess: () => setExportError(null),
+    onError: (error) => setExportError(getApiErrorMessage(error, 'Não foi possível exportar o relatório.')),
+  })
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['reports', 'analytics', from, to],
@@ -47,10 +55,26 @@ export function AnalyticsPanel() {
           <Label htmlFor="to">Até</Label>
           <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
         </div>
-        <div className="flex items-end sm:col-span-2">
+        <div className="flex flex-wrap items-end gap-2 sm:col-span-2">
           <Button onClick={() => void refetch()}>Filtrar</Button>
+          <Button
+            variant="secondary"
+            isLoading={exportMutation.isPending}
+            onClick={() => exportMutation.mutate('pdf')}
+          >
+            Exportar PDF
+          </Button>
+          <Button
+            variant="secondary"
+            isLoading={exportMutation.isPending}
+            onClick={() => exportMutation.mutate('xlsx')}
+          >
+            Exportar Excel
+          </Button>
         </div>
       </Card>
+
+      {exportError ? <ErrorMessage message={exportError} /> : null}
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-pastel-blue p-4">

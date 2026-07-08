@@ -3,8 +3,11 @@ import type { FreightStatus } from '@/shared/types/api.types'
 export interface DopingTest {
   id: number
   status: string
+  status_label?: string
+  has_file?: boolean
   file_path?: string | null
   reviewed_at?: string | null
+  created_at?: string | null
 }
 
 export interface Freight {

@@ -14,6 +14,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: ROUTES.freights, label: 'Fretes', roles: ['super_admin', 'admin', 'manager', 'driver'] },
   { to: ROUTES.calendar, label: 'Calendário', roles: ['super_admin', 'admin', 'manager'] },
   { to: ROUTES.drivers, label: 'Motoristas', roles: ['super_admin', 'admin', 'manager'] },
+  { to: ROUTES.users, label: 'Usuários', roles: ['super_admin', 'admin', 'manager'] },
   { to: ROUTES.fleet, label: 'Frota', roles: ['super_admin', 'admin', 'manager', 'driver'] },
   { to: ROUTES.adminLogs, label: 'Logs', roles: ['super_admin', 'admin'] },
   { to: ROUTES.tenant, label: 'Empresa', roles: ['super_admin', 'admin', 'manager'] },

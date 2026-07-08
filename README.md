@@ -74,12 +74,14 @@ npm run dev
 - [x] Filtros avançados em fretes e motoristas
 - [x] Detalhe do frete com mapa da rota e waypoints
 - [x] Tracking ao vivo via Reverb (posição GPS + trail no mapa)
-- [x] Workflow gestor (aprovar doping, liberar viagem)
+- [x] Workflow gestor (aprovar doping com visualização do comprovante, liberar viagem)
 - [x] Cadastro de motoristas em modal + foto
 - [x] Logo da empresa
 - [x] Frota (caminhões e reboques, CRLV, status)
 - [x] Notificações no header (sino)
 - [x] Suporte (tickets)
+- [x] Exportação de relatório financeiro (PDF/XLSX)
+- [x] Gestão de usuários da empresa
 
 ### Motorista
 - [x] Portal com resumo operacional (fretes ativos, pendências, CNH)
@@ -90,9 +92,9 @@ npm run dev
 
 ### Próximas iterações
 - [x] Tracking ao vivo (Reverb/Echo) no detalhe do frete em trânsito
-- [ ] Export PDF/XLSX de relatórios
-- [ ] Viewer de doping para gestor
-- [ ] Gestão de usuários
+- [x] Export PDF/XLSX de relatórios (aba Análise)
+- [x] Viewer de doping para gestor
+- [x] Gestão de usuários (listagem, troca de cargo, CNH)
 
 ## Scripts
 

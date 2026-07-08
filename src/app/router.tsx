@@ -14,6 +14,7 @@ import { FreightEditPage } from '@/features/freights/pages/FreightEditPage'
 import { FreightsPage } from '@/features/freights/pages/FreightsPage'
 import { SupportPage } from '@/features/support/pages/SupportPage'
 import { SupportCreatePage, SupportDetailPage } from '@/features/support/pages/SupportTicketPages'
+import { UsersPage } from '@/features/users/pages/UsersPage'
 import { CreateTenantPage } from '@/features/tenant/pages/CreateTenantPage'
 import { TenantSettingsPage } from '@/features/tenant/pages/TenantSettingsPage'
 import { AppShell } from '@/shared/components/layout/AppShell'
@@ -56,6 +57,7 @@ export function AppRouter() {
                 <Route path={ROUTES.freightCreate} element={<FreightCreatePage />} />
                 <Route path="/fretes/:id/editar" element={<FreightEditPage />} />
                 <Route path={ROUTES.drivers} element={<DriversPage />} />
+                <Route path={ROUTES.users} element={<UsersPage />} />
                 <Route path={ROUTES.tenant} element={<TenantSettingsPage />} />
                 <Route path={ROUTES.calendar} element={<CalendarPage />} />
               </Route>
